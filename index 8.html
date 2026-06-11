@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSC426 Work</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #fff; font-family: Tahoma, sans-serif; color: #1a1a1a; }
+  .header { text-align: center; padding: 16px 10px 10px; border-bottom: 1px solid #ddd; }
+  .header h1 { font-size: 17px; margin: 0 0 4px; }
+  .header p { font-size: 12px; color: #888; margin: 0; }
+  .page { max-width: 360px; margin: 0 auto; padding: 20px 16px; }
+  .blk { margin-bottom: 36px; }
+  .blk-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .blk-num { background: #000; color: #fff; font-size: 11px; font-weight: bold; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .blk-head h2 { font-size: 14px; margin: 0; }
+  .inp-wrap { margin-bottom: 12px; }
+  .inp-wrap label { display: block; font-size: 12px; color: #666; margin-bottom: 5px; }
+  .inp-wrap input { display: block; width: 100%; padding: 9px 10px; border: 1px solid #ccc; font-size: 14px; font-family: Tahoma, sans-serif; }
+  .inp-wrap input:focus { outline: 2px solid #111; border-color: transparent; }
+  .inp-err { display: none; font-size: 11px; color: red; margin-top: 4px; }
+  .inp-err.vis { display: block; }
+  .form-btns { display: flex; gap: 8px; margin-top: 16px; }
+  .form-btns button { flex: 1; padding: 10px 0; font-size: 13px; font-family: Tahoma, sans-serif; cursor: pointer; border: 1px solid #222; }
+  .btn-login { background: #1a1a1a; color: #fff; }
+  .btn-login:hover { background: #333; }
+  .btn-reset { background: white; }
+  .btn-reset:hover { background: #f0f0f0; }
+  .login-msg { margin-top: 14px; font-size: 13px; padding: 9px 12px; border: 1px solid #bbb; display: none; }
+  .login-msg.good { background: #f8f8f8; }
+  .login-msg.bad { color: #aa0000; background: #fff8f8; border-color: #ddb; }
+  .calc-display { border: 2px solid #222; background: #fefefe; text-align: right; padding: 10px 12px; font-size: 28px; min-height: 52px; margin-bottom: 10px; word-break: break-all; }
+  .calc-pad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+  .ck { padding: 13px 0; font-size: 15px; text-align: center; font-family: Tahoma, sans-serif; border: 1px solid #bbb; background: #fff; cursor: pointer; }
+  .ck:active { background: #e8e8e8; }
+  .ck.fn { background: #f4f4f4; }
+  .ck.cc { background: #ddd; }
+  .ck.eq { background: #1a1a1a; color: #fff; grid-column: span 2; border-color: #1a1a1a; }
+  hr { border: none; border-top: 1px solid #e0e0e0; margin: 0 0 36px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>CSC 426 Assignment</h1>
+  <p>Practical Work - 2024/2025</p>
+</div>
+<div class="page">
+
+  <div class="blk">
+    <div class="blk-head">
+      <div class="blk-num">1</div>
+      <h2>Login Authentication</h2>
+    </div>
+    <div class="inp-wrap">
+      <label>Username</label>
+      <input type="text" id="u2" autocomplete="off" placeholder="Enter your username">
+      <div class="inp-err" id="ue2">Please enter a username.</div>
+    </div>
+    <div class="inp-wrap">
+      <label>Password</label>
+      <input type="password" id="p2" placeholder="Enter your password">
+      <div class="inp-err" id="pe2">Password is too short (min. 6).</div>
+    </div>
+    <div class="form-btns">
+      <button class="btn-login" onclick="tryLogin()">Login</button>
+      <button class="btn-reset" onclick="resetLogin()">Cancel</button>
+    </div>
+    <div class="login-msg" id="lm2"></div>
+  </div>
+
+  <hr>
+
+  <div class="blk">
+    <div class="blk-head">
+      <div class="blk-num">2</div>
+      <h2>Calculator</h2>
+    </div>
+    <div class="calc-display" id="cd">0</div>
+    <div class="calc-pad">
+      <button class="ck cc" onclick="ccl()">C</button>
+      <button class="ck fn" onclick="cop('%')">%</button>
+      <button class="ck fn" onclick="cop('^')">^</button>
+      <button class="ck fn" onclick="cop('/')">&#247;</button>
+      <button class="ck" onclick="cdn('7')">7</button>
+      <button class="ck" onclick="cdn('8')">8</button>
+      <button class="ck" onclick="cdn('9')">9</button>
+      <button class="ck fn" onclick="cop('*')">&#215;</button>
+      <button class="ck" onclick="cdn('4')">4</button>
+      <button class="ck" onclick="cdn('5')">5</button>
+      <button class="ck" onclick="cdn('6')">6</button>
+      <button class="ck fn" onclick="cop('-')">-</button>
+      <button class="ck" onclick="cdn('1')">1</button>
+      <button class="ck" onclick="cdn('2')">2</button>
+      <button class="ck" onclick="cdn('3')">3</button>
+      <button class="ck fn" onclick="cop('+')">+</button>
+      <button class="ck" onclick="cdn('0')">0</button>
+      <button class="ck" onclick="cdn('.')">.</button>
+      <button class="ck eq" onclick="ceval()">=</button>
+    </div>
+  </div>
+
+</div>
+<script>
+  var cx = '', cjc = false;
+  function csd(v) { document.getElementById('cd').textContent = v || '0'; }
+  function cdn(d) {
+    if (cjc) { cx = ''; cjc = false; }
+    if (d === '.' && cx.split(/[+\-*/%^]/).pop().includes('.')) return;
+    cx += d; csd(cx);
+  }
+  function cop(op) {
+    cjc = false;
+    if (!cx && op !== '-') return;
+    if (cx && '+-*/%^'.includes(cx.slice(-1))) cx = cx.slice(0, -1);
+    cx += op; csd(cx);
+  }
+  function ccl() { cx = ''; cjc = false; csd('0'); }
+  function ceval() {
+    if (!cx) return;
+    try {
+      var r = Function('"use strict";return(' + cx.replace(/\^/g,'**') + ')')();
+      if (!isFinite(r)) { csd('Error'); cx = ''; return; }
+      r = parseFloat(r.toFixed(10));
+      cx = String(r); csd(cx); cjc = true;
+    } catch(e) { csd('Error'); cx = ''; }
+  }
+
+  function tryLogin() {
+    var u = document.getElementById('u2').value.trim();
+    var p = document.getElementById('p2').value;
+    var ue = document.getElementById('ue2');
+    var pe = document.getElementById('pe2');
+    var lm = document.getElementById('lm2');
+    ue.className = 'inp-err'; pe.className = 'inp-err'; lm.style.display = 'none';
+    var ok = true;
+    if (!u) { ue.className = 'inp-err vis'; ok = false; }
+    if (p.length < 6) { pe.className = 'inp-err vis'; ok = false; }
+    if (!ok) return;
+    lm.style.display = 'block';
+    if (u === 'admin' && p === 'admin123') {
+      lm.className = 'login-msg good';
+      lm.textContent = 'Login successful. Hello, ' + u + '!';
+    } else {
+      lm.className = 'login-msg bad';
+      lm.textContent = 'Wrong username or password. Please try again.';
+    }
+  }
+
+  function resetLogin() {
+    document.getElementById('u2').value = '';
+    document.getElementById('p2').value = '';
+    document.getElementById('ue2').className = 'inp-err';
+    document.getElementById('pe2').className = 'inp-err';
+    var lm = document.getElementById('lm2');
+    lm.style.display = 'none';
+    lm.className = 'login-msg';
+  }
+</script>
+</body>
+</html>
